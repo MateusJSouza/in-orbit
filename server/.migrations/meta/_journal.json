@@ -8,6 +8,13 @@
       "when": 1725990025881,
       "tag": "0000_tiresome_zarek",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1725990733005,
+      "tag": "0001_glossy_magneto",
+      "breakpoints": true
     }
   ]
 }
