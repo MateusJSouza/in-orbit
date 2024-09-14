@@ -1,7 +1,7 @@
 import logoInOrbit from '../assets/logo-in-orbit.svg'
 import letsStartIllustration from '../assets/lets-start-illustration.svg'
-import { Button } from './button'
 import { Plus } from 'lucide-react'
+import { Button } from './ui/button'
 
 export function EmptyGoals() {
   return (
