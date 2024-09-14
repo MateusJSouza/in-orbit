@@ -33,7 +33,7 @@ export async function getWeekSummary() {
         id: goalCompletions.id,
         title: goals.title,
         createdAt: goalCompletions.createdAt,
-        completionDate: sql`DATE(${goalCompletions.createdAt})`.as(
+        completedAtDate: sql`DATE(${goalCompletions.createdAt})`.as(
           'completionDate'
         ),
       })
@@ -51,7 +51,7 @@ export async function getWeekSummary() {
   const goalsCompletedByWeekDay = db.$with('goals_completed_by_week_day').as(
     db
       .select({
-        completionDate: goalsCompletedInWeek.completionDate,
+        completedAtDate: goalsCompletedInWeek.completedAtDate,
         completions: sql<
           { id: string; title: string; createdAt: string }[]
         > /* sql */`
@@ -65,7 +65,7 @@ export async function getWeekSummary() {
       `.as('completions'),
       })
       .from(goalsCompletedInWeek)
-      .groupBy(goalsCompletedInWeek.completionDate)
+      .groupBy(goalsCompletedInWeek.completedAtDate)
   )
 
   type Summary = Record<
@@ -83,7 +83,8 @@ export async function getWeekSummary() {
         (SELECT SUM(${goalsCreatedUpToWeek.desiredWeeklyFrequency}) FROM ${goalsCreatedUpToWeek})::DECIMAL
       `.mapWith(Number),
       goalsPerDay: sql<Summary> /*sql*/`
-        JSON_OBJECT_AGG(${goalsCompletedByWeekDay.completionDate}, ${goalsCompletedByWeekDay.completions})
+        JSON_OBJECT_AGG(${goalsCompletedByWeekDay.completedAtDate},
+        ${goalsCompletedByWeekDay.completions})
       `,
     })
     .from(goalsCompletedByWeekDay)
