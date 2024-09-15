@@ -117,7 +117,10 @@ export function CreateGoal() {
                         const frequency = String(i + 1)
 
                         return (
-                          <RadioGroupItem key={i} value={frequency}>
+                          <RadioGroupItem
+                            key={`frequency-${frequency}`}
+                            value={frequency}
+                          >
                             <RadioGroupIndicator />
                             <span className="text-zinc-300 text-sm font-medium leading-none">
                               {frequency}x na semana
