@@ -1,4 +1,4 @@
-interface GetSummaryResponse {
+export interface GetSummaryResponse {
   summary: {
     completed: number
     total: number
