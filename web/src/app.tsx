@@ -4,12 +4,13 @@ import { Dialog } from './components/ui/dialog'
 import { getSummary } from './http/get-summary'
 import { Loader2 } from 'lucide-react'
 import { CreateGoal } from './components/create-goal'
-import { Summary } from './components/summary'
+import { WeeklySummary } from './components/weekly-summary'
 
 export function App() {
   const { data, isLoading } = useQuery({
     queryKey: ['summary'],
     queryFn: getSummary,
+    staleTime: 1000 * 60, // 60 seconds
   })
 
   if (isLoading || !data) {
@@ -22,9 +23,11 @@ export function App() {
 
   return (
     <Dialog>
-      {data.summary.total > 0 ? <Summary /> : <EmptyGoals />}
-
-      {/* <EmptyGoals /> */}
+      {data.summary.total > 0 ? (
+        <WeeklySummary summary={data.summary} />
+      ) : (
+        <EmptyGoals />
+      )}
 
       <CreateGoal />
     </Dialog>
