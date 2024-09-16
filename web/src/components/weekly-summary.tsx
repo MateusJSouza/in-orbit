@@ -8,6 +8,9 @@ import type { GetSummaryResponse } from '../http/get-summary'
 import dayjs from 'dayjs'
 import 'dayjs/locale/pt-br'
 import { DialogTrigger } from './ui/dialog'
+import { QueryClient, useMutation } from '@tanstack/react-query'
+import { undoGoalCompletion } from '../http/undo-goal'
+import { toast } from 'sonner'
 
 dayjs.locale('pt-br')
 
@@ -16,6 +19,25 @@ interface WeeklySummaryProps {
 }
 
 export function WeeklySummary({ summary }: WeeklySummaryProps) {
+  const queryClient = new QueryClient()
+
+  const undoGoalMutation = useMutation({
+    mutationFn: undoGoalCompletion,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['summary'] })
+      queryClient.invalidateQueries({ queryKey: ['pending-goals'] })
+      toast.success('Meta desfeita com sucesso!')
+    },
+    onError: () => {
+      toast.error('Falha ao desfazer meta')
+    },
+  })
+
+  function handleUndoGoal(goalId: string) {
+    console.log('Tentando desfazer meta com ID:', goalId)
+    undoGoalMutation.mutate({ goalId })
+  }
+
   const fromDate = dayjs().startOf('week').format('D[ de ]MMM')
   const toDate = dayjs().endOf('week').format('D[ de ]MMM')
 
@@ -90,6 +112,13 @@ export function WeeklySummary({ summary }: WeeklySummaryProps) {
                           <span className="text-zinc-100">{goal.title}</span>"
                           às <span className="text-zinc-100">{parsedTime}</span>
                         </span>
+                        <button
+                          type="button"
+                          onClick={() => handleUndoGoal(goal.id)}
+                          className="text-zinc-500 underline text-xs"
+                        >
+                          Desfazer
+                        </button>
                       </li>
                     )
                   })}
